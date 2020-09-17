@@ -25,7 +25,7 @@ The second synthesis algorithm brings significant improvements in terms of the n
 
 All the necessary mathematical definitions (controller, set of controllable states, LTS, control problem ..) come from this paper.
 
-
+More informations are in this [presentation]()
 
 
 ## Input File ##
@@ -93,6 +93,20 @@ M: 7
 ```
 
 In case the grid is not specified, it is generated randomly.
+
+
+
+
+## Description and Requirements ##
+
+Python 3 was used for the development of the system. The system was developed and tested on 64-bit Python 3.6 and 64-bit Python 3.7 on Linux Systems. It has been developed and tested on Linux distros: Linux Mint and Ubuntu. The synthesis or the check if at least one path exists can be done by executing the python file main.py with the following syntax:
+
+```
+python main.py -conf config.ini -o output_folder input_file.input 
+```
+
+With the `-o output_folder` option you specify the path of the output folder, ie the folder where the file with the generated code is to be saved. The path of the NuSMV executable (the system uses the NuSMV binary executable file and the compilation is not foreseen) and the path where the NuSMV models generated used by the model checker are saved, are specified in the `config.ini`.
+
 
 
 
