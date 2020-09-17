@@ -23,7 +23,7 @@ Two algorithms have been implemented that generate the controller:
 
 The second synthesis algorithm brings significant improvements in terms of the number of cells processed and the execution time (it performs the synthesis in about half the time).
 
-All the necessary mathematical definitions (controller, set of controllable states, LTS, control problem ..) come from this paper.
+All the necessary mathematical definitions (controller, set of controllable states, LTS, control problem ..) come from [[1]](#1).
 
 More informations are in this [presentation]()
 
@@ -106,6 +106,30 @@ python main.py -conf config.ini -o output_folder input_file.input
 ```
 
 With the `-o output_folder` option you specify the path of the output folder, ie the folder where the file with the generated code is to be saved. The path of the NuSMV executable (the system uses the NuSMV binary executable file and the compilation is not foreseen) and the path where the NuSMV models generated used by the model checker are saved, are specified in the `config.ini`.
+
+Using the `-nogrid` option, the specified grid is not considered. It is required when specifying the non-grid input file. By default the most efficient algorithm for synthesis is used, you can use `-mode 0` for the standard algorithm and `-mode 1` for the optimized agorithm. With `-v 1` increases the verbosity of the output.
+
+For the other feature, which excludes the generation of the controller, the following syntax is used:
+
+```
+python main.py -path -conf config.ini input_file.input
+```
+
+In this case, no output code is generated, so it is not necessary to specify an output path.
+
+
+
+## References ##
+
+<a id="1">[1]</a>
+Mari, Federico & Melatti, Igor & Salvo, Ivano. (2011). Model Based Synthesis of Control Software from System Level Formal Specifications. ACM Transactions on Software Engineering and Methodology. 23. 10.1145/2559934.
+
+
+
+## License ##
+
+The license for this software is: GPLv3- 
+
 
 
 
