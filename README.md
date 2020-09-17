@@ -8,4 +8,91 @@ This is the Python repository about the Formal Methods in Software Development P
 
 The goal of the system is to synthesize a controller for a given game map. The game map consists of a game grid with empty cells and cells containing obstacles and a given cell which is the goal cell to be reached. The system uses nusmv as a blackbox, generating a fixed NuSMV model type (one model for each cell of the grid assuming to start from that cell to reach the goal), interrogating NuSMV and appropriately exploiting the output obtained.
 
-NuSMV is one of the best known and most efficient model checkers. In this case, it is not used for verification, but rather for synthesis. In model checking, assuming that a specific date is valid in each state of the system, LTS is passed and controlled. In case the specification is violated, a counterexample is returned. This property has been exploited using an artificial intelligence technique called planning, where the specification (certainly true) is negated in order to be surely violated. In this way the model checker will provide us with the solution we are looking for. The specification is also modeled through a specific class of logic called temporal logic.
+NuSMV is one of the best known and most efficient model checkers. In this case, it is not used for verification, but rather for synthesis. In model checking, assuming that a specific date is valid in each state of the system, LTS is passed and controlled. In case the specification is violated, a counterexample is returned. This property has been exploited using an artificial intelligence technique called planning, where a true specification is negated in order to abtain the solution for the problem. The specification is modeled through a specific class of logic called temporal logic (in this case, as a LTL specification).
+
+The counterexample gives us the correct sequence of states-actions to get from the current starting cell to the goal cell. Being defined on the whole grid, if the cell does not have an obstacle the generated controller knows which is the correct action to get to the goal from each cell. Since the model checker provides the minimum path, the move is also the optimal one.
+
+The system returns Python code containing a K function that contains all the correct actions from every controllable state, so from every state that has at least one path to the goal. So it returns true if the given action is correct for the given state, false otherwise. In addition, it also issues returns the Python code of a function called Legal which returns true or false for each state if and only if a given action is legal for that given state. Both functions take a state and an action as input and return a boolean value.
+
+Two algorithms have been implemented that generate the controller:
+
+- A naive algorithm (called standard algorithm) that checks each cell of the grid and checks if there is at least one path to the goal. If so, the counterexample is returned.
+- An optimized algorithm that takes into account some considerations:
+   1. If a cell contains an obstacle, it certainly will not have at least one path to the goal.
+   2. If a cell is crossed by a path already calculated, it will surely have a path up to the goal and therefore do not ask NuSMV about that cell.
+
+The second synthesis algorithm brings significant improvements in terms of the number of cells processed and the execution time (it performs the synthesis in about half the time).
+
+All the necessary mathematical definitions (controller, set of controllable states, LTS, control problem ..) come from this paper.
+
+
+
+
+## Input File ##
+
+You can specify two types of input files.
+
+
+The first type of input file is as follows:
+
+```
+Goal: (2, 2)
+M: 3
+N: 3
+Grid: 
+      0 1 1    
+      1 0 0 
+      1 1 0
+```
+
+In this case, the whole file is parsed obtaining the goal cell, the grid size and the grid itself. You have a fixed grid.
+Clearly it is not possible to specify a goal cell that contains an obstacle.
+
+
+The second type of input file is as follows:
+
+```
+Goal: (2, 2)
+M: 3
+N: 3
+```
+
+In this case, parsing the file, we get the goal cell and the grid size. The grid is generated randomly with the constraint that the goal cell cannot have an obstacle.
+
+
+
+
+## Additional Feature ##
+
+An additional feature has been developed to check if there is at least one path to the goal from a given initial cell. The principle is always to query NuSMV as a blackbox; it is not queried on the whole grid but only on the initial cell.
+
+The input in this case has the form:
+
+```
+Goal: (6, 1)
+Init: (2, 6)
+N: 7
+M: 7
+Grid: 
+      0 1 1 0 0 1 1 
+      1 0 0 1 1 0 1 
+      0 1 0 1 0 0 0 
+      0 0 1 0 0 1 1 
+      0 0 1 1 1 0 0 
+      1 0 1 1 0 1 0 
+      1 0 1 1 0 1 0
+```
+
+or
+
+```
+Goal: (6, 1)
+Init: (2, 6)
+N: 7
+M: 7
+```
+
+In case the grid is not specified, it is generated randomly.
+
+
+
