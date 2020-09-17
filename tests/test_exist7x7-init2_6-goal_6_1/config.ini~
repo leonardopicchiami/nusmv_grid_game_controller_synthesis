@@ -1,0 +1,5 @@
+[NUSMV]
+nusmv=/home/leonardo/Universita/magistrale/formal_methods_in_software_development/formalmethodsinsoftwaredevelopment-progetto/nusmv/64-bit/NuSMV-2.6.0-Linux/bin/NuSMV
+
+[MODEL]
+nusmv_model_folder=/home/leonardo/Universita/magistrale/formal_methods_in_software_development/formalmethodsinsoftwaredevelopment-progetto/src/nusmv/model_exist7x7-init2_6-goal_6_1

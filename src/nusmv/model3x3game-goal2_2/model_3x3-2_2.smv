@@ -1,0 +1,48 @@
+MODULE main
+
+  DEFINE
+
+     grid := [[0, 1, 1], [1, 0, 0], [1, 1, 0]];
+     N := 3;
+     M := 3;
+
+
+  VAR
+
+     i : 0..2;
+     j : 0..2;
+     action : {no-action, up, right-up, left-up, down, right-down, left-down, left, right};
+
+
+  ASSIGN
+
+      init(i) := 2;
+      init(j) := 2;
+      init(action) := no-action;
+
+
+
+      next(action) := case
+                      grid[i][j] = 1 : no-action;
+                     (i = 0) & (j = 0) : {right-down};
+                     (i = 1) & (j = 1) : {right-down, left-up, right};
+                     (i = 1) & (j = 2) : {down, left};
+                     TRUE : no-action;
+                     esac;
+
+      next(i) := case
+               ((next(action) = down) | (next(action) = right-down) | (next(action) = left-down)) & (i + 1 < N) : i + 1;
+               ((next(action) = up) | (next(action) = right-up) | (next(action) = left-up)) & (i - 1 >= 0): i - 1;
+               TRUE : i;
+               esac;
+
+      next(j) := case
+               ((next(action) = right) | (next(action) = right-up) | (next(action) = right-down)) & (j + 1 < M): j + 1;
+               ((next(action) = left) | (next(action) = left-up) | (next(action) = left-down)) & (j - 1 >= 0) : j - 1;
+               TRUE : j;
+               esac;
+
+
+   LTLSPEC
+
+      !(F ((i = 2) & (j = 2)))

@@ -1,0 +1,29 @@
+
+
+
+***** TEST CONTROLLER INTERROGATION *****
+
+0  1  1  
+1  0  I  
+1  1  G  
+
+
+
+Legal((1, 2), down) = True
+K((1, 2), down) = True
+
+
+Legal((1, 2), left) = True
+K((1, 2), left) = False
+
+
+Legal((1, 1), left-up) = True
+K((1, 1), left-up) = False
+
+
+Legal((1, 1), right) = True
+K((1, 1), right) = False
+
+
+Legal((1, 1), right-down) = True
+K((1, 1), right-down) = True

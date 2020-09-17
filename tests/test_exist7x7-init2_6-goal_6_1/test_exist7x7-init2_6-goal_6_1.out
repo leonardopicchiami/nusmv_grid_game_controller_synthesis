@@ -1,0 +1,27 @@
+********************** NUSMV GAME GRID CONTROLLER SYNTHESIS ***********************
+
+
+Number of line N: 7
+Number of column M: 7
+Init of the grid: (2, 6)
+Goal of the grid: (6, 1)
+
+
+Grid value 0: grid cell without obstacle (traversable cell).
+Grid value 1: grid cell with obstacle.
+Grid value I: init cell
+Grid value G: goal cell.
+
+
+Game grid: 
+
+0 1 1 0 0 1 1 
+1 0 0 1 1 0 1 
+0 1 0 1 0 0 I 
+0 0 1 0 0 1 1 
+0 0 1 1 1 0 0 
+1 0 1 1 0 1 0 
+1 G 1 1 0 1 0 
+
+
+There is at least one path from init (2, 6) to goal (6, 1)

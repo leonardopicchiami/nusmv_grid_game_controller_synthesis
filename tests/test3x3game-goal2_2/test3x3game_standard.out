@@ -1,0 +1,47 @@
+********************** NUSMV GAME GRID CONTROLLER SYNTHESIS ***********************
+
+
+Number of line N: 3
+Number of column M: 3
+Goal of the grid: (2, 2)
+
+
+Grid value 0: grid cell without obstacle (traversable cell).
+Grid value 1: grid cell with obstacle.
+Grid value 2: controlled grid cell.
+Grid value G: goal cell.
+
+
+Game grid: 
+
+0 1 1 
+1 0 0 
+1 1 G 
+
+
+Controller synthesis algorithm: standard.
+
+
+***** Controlled Grid *****
+
+
+2 1 1 
+1 2 2 
+1 1 G 
+
+
+Controlled states of generated controller:
+
+[(0, 0), (1, 1), (1, 2), (2, 2)]
+
+
+
+***** STATISTICS *****
+
+Empty cells: 4.
+Cells with obstacles: 5
+Controllable cells: 4.
+Processed cells: 9.
+
+Execution time: 0.09534668922424316 sec.
+Python process RAM usage: 15.16796875 MB

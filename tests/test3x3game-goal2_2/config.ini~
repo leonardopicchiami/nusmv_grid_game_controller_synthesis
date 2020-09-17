@@ -1,0 +1,5 @@
+[NUSMV]
+nusmv=../../src/nusmv/64-bit/NuSMV-2.6.0-Linux/bin/NuSMV
+
+[MODEL]
+nusmv_model_folder=../../src/nusmv/model3x3game-goal2_2
