@@ -150,7 +150,7 @@ Mari, Federico & Melatti, Igor & Salvo, Ivano. (2011). Model Based Synthesis of 
 
 ## License ##
 
-The license for this software is: GPLv3- 
+The license for this software is: GPLv3. 
 
 
 
