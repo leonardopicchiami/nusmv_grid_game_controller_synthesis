@@ -25,7 +25,10 @@ The second synthesis algorithm brings significant improvements in terms of the n
 
 All the necessary mathematical definitions (controller, set of controllable states, LTS, control problem ..) come from [[1]](#1).
 
-More informations are in this [presentation]()
+More informations are in this [presentation](doc/nusmv_controller_synthesis.pdf)
+
+
+Only a few test cases have been reported. For the other test cases explained in the presentation please contact me.
 
 
 ## Input File ##
@@ -134,6 +137,8 @@ The system uses the standard Python 3 libraries, along with the following additi
 - psutils
 - resource
 
+
+NuSMV executable was not loaded. NuSMV executable was not loaded. This [file](nusmv/Readme.md) explains how to download it to run the code.
 
 
 ## References ##
