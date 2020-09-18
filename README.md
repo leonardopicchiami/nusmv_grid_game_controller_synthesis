@@ -48,8 +48,7 @@ Grid:
       1 1 0
 ```
 
-In this case, the whole file is parsed obtaining the goal cell, the grid size and the grid itself. You have a fixed grid.
-Clearly it is not possible to specify a goal cell that contains an obstacle.
+In this case, the whole file is parsed obtaining the goal cell, the grid size and the grid itself. You have a fixed grid. With 1 the cell with obstacle is coded, with 0 the empty cell. Clearly it is not possible to specify a goal cell that contains an obstacle.
 
 
 The second type of input file is as follows:
