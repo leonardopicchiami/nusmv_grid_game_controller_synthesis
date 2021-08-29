@@ -6,29 +6,46 @@ This is the Python repository about the Formal Methods in Software Development P
 
 ## Goal Description ##
 
-The goal of the system is to synthesize a controller for a given game map. The game map consists of a game grid with empty cells, cells containing obstacles and a given cell which is the goal cell to be reached. The system uses nusmv as a blackbox, generating a fixed NuSMV model type (one model for each cell of the grid assuming to start from that cell to reach the goal), interrogating NuSMV and appropriately exploiting the output obtained.
+We developed a tool to synthesise a software controller for a given game map. The game map consists of a game grid with empty cells, cells containing obstacles, and a goal cell to be reached. The controller must be able to bring a player, from any initial cell to the goal cell. Such a player will perform a sequence of actions, by crossing several cells, up to reach the goal. It can only cross the empty cell. 
 
-NuSMV is one of the best known and most efficient model checkers. In this case, it is not used for verification, but for synthesis. In model checking, a specific property (specification) is verified by visiting the LTS representing the system states. In case the specification is violated, a counterexample is returned. This property has been exploited using an artificial intelligence technique called *planning*, where a true specification is negated in order to abtain the solution for that problem. The specification is modeled through a specific class of logic called temporal logic (in this case, as a LTL specification).
+The tool uses NuSMV as a black-box to obtain the solution of a specific instance of that game. We can see an instance as a player that has to reach the goal cell by starting from a specific initial cell. Since the controller is defined on the whole grid, the tool uses NuSVM for NxM instances (as a worst case), where N and M are the dimensions of the grid. 
 
-The counterexample gives us the correct sequence of states-actions to get from the current starting cell to the goal cell. Being defined on the whole grid, if the cell does not have an obstacle the generated controller knows which is the correct action to get to the goal from each cell. Since the model checker provides the minimum path, the move is also the optimal one.
+To do that, firstly, it generates a NuSMV model and then appropriately exploits the model checker's output. This procedure is repeated for every instance, *i.e.*, for every cell of the grid. 
 
-The system returns Python code containing a *K function* that contains all the correct actions from every controllable state, so from every state that has at least one path to the goal. So it returns true if the given action is correct for the given state, false otherwise. In addition, it also issues returns the Python code of a function called *Legal* which returns true or false for each state if and only if a given action is legal for that given state. Both functions take a state and an action as input and return a boolean value.
+NuSMV is one of the best existing known and most efficient model checkers. In this context, we used it not for verification but for synthesis purposes. 
 
-Two algorithms have been implemented that generate the controller:
+In the Model Checking, a specific property (specification) can be verified by exploring the LTS that models the system states. In the case of a violation of that specification, the model checker returns a counterexample. Using an artificial intelligence technique called *planning*, we exploited the counterexample to get the solution of the modelled problem. In particular, the verifier checks the negation of a given specification in order to returns a counterexample (the minimum path) when the specification is satisfied. In this way, the controller can learn, for every cell, the correct action that brings to the goal. We modelled the specification through a specific class of temporal logic (*i.e.*, as an LTL specification).
 
-- A naive algorithm (called standard algorithm) that checks, for each cell, if there is at least one path to the goal. If exists, the counterexample is returned.
-- An optimized algorithm that takes into account some considerations:
-   1. If a cell contains an obstacle, it certainly will not have at least one path to the goal.
-   2. If a cell is inside another path, it will surely have a path up to the goal and therefore NuSMV will not interrogated about that cell.
+We defined an action as *legal* as follows: 
 
-The second synthesis algorithm brings significant improvements in terms of the number of cells processed and the execution time (it performs the synthesis in about half the time).
+- An action is legal if it brings the current state into a successor state, so the cell in which we move, in the neighbourhood of the current state, and the successor does not have an obstacle.
+
+We defined an action as *correct* as follows:
+
+- An action is correct if it is legal and if, from the current state, it is an optimal action that leads to the goal.
+
+
+The counterexample gives us the sequence of states-actions (*i.e.*, a sequence of correct actions) to get from the current starting cell to the goal cell. By extracting this sequence starting from every cell, the controller is able to tell us if an action for a given state is correct or not. 
+
+Since the model checker provides the minimum path, a correct action is also the optimal one.
+
+The tool returns the Python code that contains a *K function*, *i.e.*, the software controller (as in [[1]](#1)). For every state in the controller (called *controllable state*), it tells us what are the actions that bring to the goal.  This means that a state is controllable if and only presents at least one path to the goal. *K* returns true if the given action is correct for the given state, false otherwise. In addition, the tool also returns the Python code of a function called *Legal* which returns true or false for each state if and only if a given action is legal for that given state. Both functions take a state and an action as input and return a boolean value.
+
+Two algorithms have been implemented to generate the controller:
+
+- A naive algorithm (standard algorithm) that checks, for each cell, if there is at least one path that brings to the goal. If it exists, NuSMV returns the counterexample.
+- An optimised algorithm that takes into account some considerations:
+  	1. If a cell contains an obstacle, it certainly will not have at least one path to the goal.
+	2. If a cell is inside another optimal path, it will have a path up to the goal, and we do not need to interrogate NuSMV about that cell.
+
+The optimised synthesis algorithm brings significant improvements in terms of the number of cells processed and execution time (it performs the synthesis in about half the time).
 
 All the necessary mathematical definitions (controller, set of controllable states, LTS, control problem ..) come from [[1]](#1).
 
 More informations are in this [presentation](doc/nusmv_controller_synthesis.pdf)
 
 
-Only a few test cases have been reported. For the other test cases explained in the presentation please contact me.
+Only a few test cases have been updated. For the other test cases explained in the presentation, contact me.
 
 
 ## Input File ##
@@ -43,12 +60,12 @@ Goal: (2, 2)
 M: 3
 N: 3
 Grid: 
-      0 1 1    
+      0 1 1
       1 0 0 
       1 1 0
 ```
 
-In this case, the whole file is parsed obtaining the goal cell, the grid size and the grid itself. You have a fixed grid. With 1 the cell with obstacle is coded, with 0 the empty cell. Clearly it is not possible to specify a goal cell that contains an obstacle.
+In this case, the file contains the goal cell, the grid size and the grid itself. You have a fixed grid. We used 1 to encode an obstacle and 0 to encode an empty cell. It is not possible to specify a goal cell that contains an obstacle.
 
 
 The second type of input file is as follows:
@@ -59,14 +76,14 @@ M: 3
 N: 3
 ```
 
-In this case, parsing the file, we get the goal cell and the grid size. The grid is generated randomly with the constraint that the goal cell cannot have an obstacle.
+In this case, the file contains only the goal cell and the grid size. In such a context, the tool randomly generates a grid. The specified goal cell will not contain an obstacle.
 
 
 
 
 ## Additional Feature ##
 
-An additional feature has been developed to check if there is at least one path to the goal from a given initial cell. The principle is always to query NuSMV as a blackbox; it is not queried on the whole grid but only on the initial cell.
+An additional feature has been developed to check if there is at least one path to the goal from a given initial cell. The principle is always to query NuSMV as a black-box; it is not queried on the whole grid but only on the initial cell.
 
 The input in this case has the form:
 
@@ -94,22 +111,28 @@ N: 7
 M: 7
 ```
 
-In case the grid is not specified, it is generated randomly.
+If the grid is not specified, the tool  randomly generates it.
 
 
 
 
 ## Description and Requirements ##
 
-Python 3 was used for the development of the system. The system was developed and tested on 64-bit Python 3.6 and 64-bit Python 3.7 on Linux Systems. It has been developed and tested on Linux distros: Linux Mint and Ubuntu. The synthesis can be done by executing the python file main.py with the following syntax:
+Python 3 was used for the development of the tool. We developed and performed the experiments using Python 3.6 and Python 3.7 on Linux Systems. In particular, Linux Mint and Ubuntu.
+
+The synthesis can be perfrmed by running the python file *main.py* as follows:
 
 ```
 python main.py -conf config.ini -o output_folder input_file.input 
 ```
 
-With the `-o output_folder` option you specify the path of the output folder, i.e. the folder where the file with the generated python code is to be saved. The path of the NuSMV executable (the system uses the NuSMV binary executable file and the compilation is not foreseen) and the path where the NuSMV models generated used by the model checker are saved, are specified in the `config.ini`.
+Through the `-o output_folder` option, you can specify the path of the output folder, i.e., the directory where the tool has to store the code of the controller.
 
-Using the `-nogrid` option, the specified grid is not considered. It is required when specifying the non-grid input file. By default the most efficient algorithm for synthesis is used, you can use `-mode 0` for the standard algorithm and `-mode 1` for the optimized agorithm. With `-v 1` increases the verbosity of the output. Using only the `-h` option, you get a summary of the available options.
+The tool needs a path for  NuSMV executable (the tool uses the NuSMV binary executable file and the compilation is not foreseen) and a path to store NuSMV models. This informations can be specified in the `config.ini`.
+
+Using the `-nogrid` option, the specified grid is not considered. It is required when the user specifies the non-grid input file. By default, the optimised synthesis algorithm is used. In any case, you can use `-mode 0` for the standard algorithm and `-mode 1` for the optimised algorithm. 
+
+Using `-v 1`, you can increase the verbosity of the output. Using only the `-h` option, you get a summary of the available options.
 
 For the other feature, which excludes the generation of the controller, the following syntax is used:
 
@@ -131,19 +154,19 @@ nusmv=nusmv_executable_path
 nusmv_model_folder=nusmv_models_path
 ```
 
-The system uses the standard Python 3 libraries, along with the following additional libraries:
+The tool uses the standard Python 3 libraries, along with the following additional libraries:
 
 - psutils
 - resource
 
 
-NuSMV executable was not loaded. NuSMV executable was not loaded. This [file](nusmv/Readme.md) explains how to download it to run the code.
+NuSMV executable was not updated. This [file](nusmv/Readme.md) explains how to download it to run the code.
 
 
 ## References ##
 
 <a id="1">[1]</a>
-Mari, Federico & Melatti, Igor & Salvo, Ivano. (2011). Model Based Synthesis of Control Software from System Level Formal Specifications. ACM Transactions on Software Engineering and Methodology. 23. 10.1145/2559934.
+Mari, F., Melatti, I., Salvo, I., & Tronci, E. (2014). Model-based synthesis of control software from system-level formal specifications. ACM Transactions on Software Engineering and Methodology (TOSEM), 23(1), 1-42.
 
 
 
